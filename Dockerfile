@@ -1,15 +1,17 @@
-# Specify a base image
-FROM node:alpine
+FROM python:3.7-alpine
 
-# Set up the working directory
-WORKDIR /usr/app
+WORKDIR /code
 
-# Install some dependencies
-COPY package.json/ ./
-RUN npm install
+ENV FLASK_APP=app.py
+ENV FLASK_RUN_HOST=0.0.0.0
 
-# Copy in the necessary files
-COPY ./ ./
+RUN apk add --no-cache gcc musl-dev linux-headers
+COPY requirements.txt requirements.txt
 
-# Default command
-CMD ["npm", "start"]
+RUN pip install -r requirements.txt
+
+EXPOSE 5000
+
+COPY . ./
+
+CMD ["flask", "run"]
